@@ -12,7 +12,7 @@ main
   copy =
     data
   ldflags =
-    -lSDL2 -lGL -lSDL2_image
+    -lSDL2 -lGL -lSDL2_image -lSDL2_ttf
 
 all
   in = @main
