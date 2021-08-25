@@ -10,6 +10,9 @@
 #include <iostream>
 #include <thread>
 
+auto text = R"_(This is a longer text
+that is used to test how text wrapping will work)_";
+
 int main(int argc, char **argv) {
     ttf::init();
 
@@ -52,23 +55,40 @@ int main(int argc, char **argv) {
         std::exit(0);
     }
 
-    auto surf = font.renderText("Hello", {255, 255, 255, 255});
+    {
+        auto surf = font.renderText("Hello", {255, 255, 255, 255});
 
-    if (!surf) {
-        std::cerr << "Could not create text surface\n";
-        std::exit(0);
-    }
+        if (!surf) {
+            std::cerr << "Could not create text surface\n";
+            std::exit(0);
+        }
 
-    auto texture = renderer.createTextureFromSurface(surf);
+        auto texture = renderer.createTextureFromSurface(surf);
 
-    if (!texture) {
-        std::cerr << "could not create texture\n";
-        std::exit(0);
+        if (!texture) {
+            std::cerr << "could not create texture\n";
+            std::exit(0);
+        }
+
+        auto rect = sdl::Rect{10, 10, surf->w, surf->h};
+
+        renderer.copy(texture, nullptr, &rect);
     }
 
     {
-        auto rect = sdl::Rect{10, 10, surf->w, surf->h};
+        drawButton(renderer, buttonTexture, 8, 100 + 2, 200 + 4, 50);
 
+        auto surf =
+            font.renderTextBlendedWrapped(text, {255, 255, 255, 255}, 200);
+
+        auto texture = renderer.createTextureFromSurface(surf);
+
+        if (!texture) {
+            std::cerr << "could not create texture 2\n";
+            std::exit(0);
+        }
+
+        auto rect = sdl::Rect{10, 102, surf->w, surf->h};
         renderer.copy(texture, nullptr, &rect);
     }
 
